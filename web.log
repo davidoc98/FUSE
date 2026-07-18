@@ -1,0 +1,13 @@
+
+> fuse-app@1.0.0 web
+> expo start --web
+
+Starting project at /app
+Using src/app as the root directory for Expo Router.
+React Compiler enabled
+Starting Metro Bundler
+
+Waiting on http://localhost:8081
+
+2 packages may need updating. Run npx expo install --check for details.
+Logs for your project will appear below.
