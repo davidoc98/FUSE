@@ -3,7 +3,7 @@
 This is a functional mobile prototype for the FUSE project, a 2027 video social landscape that prioritizes human depth over algorithmic fatigue.
 
 ## Project Origin
-The project is built based on the Stitch UI specification "FUSE: Экосистема Смыслов".
+The project is built based on the Stitch UI specification `FUSE: Экосистема Смыслов` (`projects/14144176844156979863`).
 
 ## Screens Retrieved & Analyzed
 *   Пульс
