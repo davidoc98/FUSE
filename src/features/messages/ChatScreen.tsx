@@ -5,12 +5,14 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { tokens } from '../../design-system/tokens';
 import { AppIcon } from '../../components/AppIcon';
 import { useStore } from '../../store/useStore';
+import { useResponsive } from '../../hooks/useResponsive';
 
 export const ChatScreen = () => {
   const { id, username } = useLocalSearchParams<{ id: string, username: string }>();
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const currentUser = useStore((state) => state.currentUser);
+  const { isDesktop } = useResponsive();
 
   // Local state for chat MVP
   const [messages, setMessages] = useState([
@@ -40,45 +42,47 @@ export const ChatScreen = () => {
   };
 
   return (
-    <KeyboardAvoidingView
-        style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
-      <View style={styles.header}>
-        <Pressable onPress={() => router.back()} style={styles.backBtn}>
-          <AppIcon name="arrow-back" size={24} color={tokens.colors['on-surface']} />
-        </Pressable>
-        <Text style={styles.headerTitle}>{username}</Text>
-        <View style={styles.backBtn} />
-      </View>
+    <View style={[styles.container, { paddingTop: isDesktop ? tokens.spacing.stackLg : insets.top, paddingBottom: isDesktop ? tokens.spacing.stackLg : insets.bottom }]}>
+      <KeyboardAvoidingView
+          style={styles.contentWrapper}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        <View style={styles.header}>
+          <Pressable onPress={() => router.back()} style={styles.backBtn}>
+            <AppIcon name="arrow-back" size={24} color={tokens.colors['on-surface']} />
+          </Pressable>
+          <Text style={styles.headerTitle}>{username}</Text>
+          <View style={styles.backBtn} />
+        </View>
 
-      <FlatList
-        data={messages}
-        renderItem={renderMessage}
-        keyExtractor={item => item.id}
-        inverted
-        contentContainerStyle={styles.chatList}
-      />
-
-      <View style={styles.inputArea}>
-        <AppIcon name="add" size={24} color={tokens.colors['on-surface-variant']} />
-        <TextInput
-          style={styles.input}
-          placeholder="Сообщение..."
-          placeholderTextColor={tokens.colors['on-surface-variant']}
-          value={inputText}
-          onChangeText={setInputText}
-          multiline
+        <FlatList
+          data={messages}
+          renderItem={renderMessage}
+          keyExtractor={item => item.id}
+          inverted
+          contentContainerStyle={styles.chatList}
         />
-        <Pressable onPress={sendMessage} disabled={!inputText.trim()}>
-          <AppIcon
-            name="send"
-            size={24}
-            color={inputText.trim() ? tokens.colors.primary : tokens.colors['surface-container-highest']}
+
+        <View style={styles.inputArea}>
+          <AppIcon name="add" size={24} color={tokens.colors['on-surface-variant']} />
+          <TextInput
+            style={styles.input}
+            placeholder="Сообщение..."
+            placeholderTextColor={tokens.colors['on-surface-variant']}
+            value={inputText}
+            onChangeText={setInputText}
+            multiline
           />
-        </Pressable>
-      </View>
-    </KeyboardAvoidingView>
+          <Pressable onPress={sendMessage} disabled={!inputText.trim()}>
+            <AppIcon
+              name="send"
+              size={24}
+              color={inputText.trim() ? tokens.colors.primary : tokens.colors['surface-container-highest']}
+            />
+          </Pressable>
+        </View>
+      </KeyboardAvoidingView>
+    </View>
   );
 };
 
@@ -86,6 +90,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: tokens.colors.background,
+  },
+  contentWrapper: {
+    flex: 1,
+    maxWidth: 800,
+    width: '100%',
+    alignSelf: 'center',
+    backgroundColor: tokens.colors['surface-container-lowest'],
+    borderRadius: tokens.rounded.xl,
+    overflow: 'hidden',
   },
   header: {
     flexDirection: 'row',

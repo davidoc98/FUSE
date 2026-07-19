@@ -9,6 +9,7 @@ import { Badge } from '../../components/Badge';
 import { AppIcon } from '../../components/AppIcon';
 import { TrackEpisodeCard } from './TrackEpisodeCard';
 import { ProgressTimeline } from './ProgressTimeline';
+import { useResponsive } from '../../hooks/useResponsive';
 
 interface TrackScreenProps {
   trackId: string;
@@ -18,6 +19,7 @@ export const TrackScreen: React.FC<TrackScreenProps> = ({ trackId }) => {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const track = mockTracks[trackId];
+  const { isDesktop } = useResponsive();
 
   if (!track) {
     return (
@@ -31,50 +33,52 @@ export const TrackScreen: React.FC<TrackScreenProps> = ({ trackId }) => {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isDesktop && { paddingTop: tokens.spacing.stackLg }]}>
       <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom + 100 }}>
-        {/* Cover */}
-        <View style={styles.coverContainer}>
-          <Image source={{ uri: track.coverUrl }} style={styles.coverImage} />
-          <View style={styles.coverOverlay} />
-          <Pressable
-            onPress={() => router.back()}
-            style={[styles.headerBackButton, { top: insets.top + tokens.spacing.unit * 2 }]}
-          >
-            <AppIcon name="arrow-back" size={24} color="white" />
-          </Pressable>
-        </View>
+        <View style={styles.contentWrapper}>
+            {/* Cover */}
+            <View style={[styles.coverContainer, isDesktop && { borderRadius: tokens.rounded.xl }]}>
+            <Image source={{ uri: track.coverUrl }} style={styles.coverImage} />
+            <View style={[styles.coverOverlay, StyleSheet.absoluteFillObject]} />
+            <Pressable
+                onPress={() => router.back()}
+                style={[styles.headerBackButton, { top: (isDesktop ? tokens.spacing.unit * 2 : insets.top + tokens.spacing.unit * 2) }]}
+            >
+                <AppIcon name="arrow-back" size={24} color="white" />
+            </Pressable>
+            </View>
 
-        {/* Info */}
-        <View style={styles.infoContainer}>
-          <View style={styles.tagsRow}>
-             {track.tags.map(tag => (
-                <Badge key={tag} label={tag} variant="proof" />
-             ))}
-          </View>
-          <Text style={styles.title}>{track.title}</Text>
-          <View style={styles.authorRow}>
-            <Avatar url={track.author.avatarUrl} size={32} />
-            <Text style={styles.authorName}>{track.author.username}</Text>
-          </View>
-          <Text style={styles.description}>{track.description}</Text>
+            {/* Info */}
+            <View style={styles.infoContainer}>
+            <View style={styles.tagsRow}>
+                {track.tags.map(tag => (
+                    <Badge key={tag} label={tag} variant="proof" />
+                ))}
+            </View>
+            <Text style={styles.title}>{track.title}</Text>
+            <View style={styles.authorRow}>
+                <Avatar url={track.author.avatarUrl} size={32} />
+                <Text style={styles.authorName}>{track.author.username}</Text>
+            </View>
+            <Text style={styles.description}>{track.description}</Text>
 
-          <ProgressTimeline progress={track.progress} />
+            <ProgressTimeline progress={track.progress} />
 
-          {/* Tabs */}
-          <View style={styles.tabsRow}>
-            <Text style={[styles.tabText, styles.tabTextActive]}>Выпуски</Text>
-            <Text style={styles.tabText}>Материалы</Text>
-            <Text style={styles.tabText}>Обсуждение</Text>
-            <Text style={styles.tabText}>О проекте</Text>
-          </View>
+            {/* Tabs */}
+            <View style={styles.tabsRow}>
+                <Text style={[styles.tabText, styles.tabTextActive]}>Выпуски</Text>
+                <Text style={styles.tabText}>Материалы</Text>
+                <Text style={styles.tabText}>Обсуждение</Text>
+                <Text style={styles.tabText}>О проекте</Text>
+            </View>
 
-          {/* Episodes List */}
-          <View style={styles.episodesList}>
-             {track.episodes.map((ep, index) => (
-                <TrackEpisodeCard key={ep.id} episode={ep as any} index={index} />
-             ))}
-          </View>
+            {/* Episodes List */}
+            <View style={styles.episodesList}>
+                {track.episodes.map((ep, index) => (
+                    <TrackEpisodeCard key={ep.id} episode={ep as any} index={index} />
+                ))}
+            </View>
+            </View>
         </View>
       </ScrollView>
     </View>
@@ -85,6 +89,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: tokens.colors.background,
+  },
+  contentWrapper: {
+    maxWidth: 800,
+    width: '100%',
+    alignSelf: 'center',
   },
   errorText: {
     color: tokens.colors.error,
@@ -113,7 +122,6 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   coverOverlay: {
-    ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0,0,0,0.4)',
   },
   headerBackButton: {

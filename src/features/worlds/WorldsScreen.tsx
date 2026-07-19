@@ -6,19 +6,19 @@ import { useStore } from '../../store/useStore';
 import { World } from '../../types';
 import { AppIcon } from '../../components/AppIcon';
 import { LinearGradient } from 'expo-linear-gradient';
-
-const { width } = Dimensions.get('window');
+import { useResponsive } from '../../hooks/useResponsive';
 
 export const WorldsScreen = () => {
   const insets = useSafeAreaInsets();
   const worlds = useStore((state) => state.worlds);
+  const { isDesktop } = useResponsive();
 
   const renderWorldCard = ({ item }: { item: World }) => (
     <Pressable style={styles.card}>
       <Image source={{ uri: item.coverUrl }} style={styles.cardImage} />
       <LinearGradient
         colors={['transparent', 'rgba(0,0,0,0.8)']}
-        style={styles.cardOverlay}
+        style={StyleSheet.absoluteFillObject}
       />
       <View style={styles.cardContent}>
         <View style={styles.tagsRow}>
@@ -34,19 +34,21 @@ export const WorldsScreen = () => {
   );
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Миры</Text>
-        <AppIcon name="add-circle-outline" size={28} color={tokens.colors['on-surface']} />
-      </View>
+    <View style={[styles.container, { paddingTop: isDesktop ? 0 : insets.top }]}>
+      <View style={styles.contentWrapper}>
+        <View style={styles.header}>
+            <Text style={styles.headerTitle}>Миры</Text>
+            <AppIcon name="add-circle-outline" size={28} color={tokens.colors['on-surface']} />
+        </View>
 
-      <FlatList
-        data={worlds}
-        renderItem={renderWorldCard}
-        keyExtractor={item => item.id}
-        contentContainerStyle={styles.listContainer}
-        showsVerticalScrollIndicator={false}
-      />
+        <FlatList
+            data={worlds}
+            renderItem={renderWorldCard}
+            keyExtractor={item => item.id}
+            contentContainerStyle={styles.listContainer}
+            showsVerticalScrollIndicator={false}
+        />
+      </View>
     </View>
   );
 };
@@ -56,11 +58,18 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: tokens.colors.background,
   },
+  contentWrapper: {
+    flex: 1,
+    maxWidth: 800,
+    width: '100%',
+    alignSelf: 'center',
+  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: tokens.spacing.containerMarginMobile,
+    paddingTop: tokens.spacing.stackLg,
     paddingBottom: tokens.spacing.stackMd,
   },
   headerTitle: {
@@ -84,9 +93,6 @@ const styles = StyleSheet.create({
   cardImage: {
     width: '100%',
     height: '100%',
-  },
-  cardOverlay: {
-    ...StyleSheet.absoluteFillObject,
   },
   cardContent: {
     position: 'absolute',

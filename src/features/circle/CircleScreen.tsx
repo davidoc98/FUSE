@@ -7,6 +7,7 @@ import { Video } from '../../types';
 import { Avatar } from '../../components/Avatar';
 import { AppIcon } from '../../components/AppIcon';
 import { useRouter } from 'expo-router';
+import { useResponsive } from '../../hooks/useResponsive';
 
 const FILTERS = ['Всё', 'Авторы', 'Миры', 'Tracks', 'Эфиры', 'Близкие', 'Непросмотренное'];
 
@@ -15,6 +16,7 @@ export const CircleScreen = () => {
   const circleVideos = useStore((state) => state.circleVideos);
   const [activeFilter, setActiveFilter] = useState('Всё');
   const router = useRouter();
+  const { isDesktop } = useResponsive();
 
   const renderFilter = ({ item }: { item: string }) => (
     <Pressable
@@ -37,7 +39,6 @@ export const CircleScreen = () => {
       </View>
       <Text style={styles.postDescription} numberOfLines={2}>{item.description}</Text>
 
-      {/* Thumbnail placeholder since we can't auto-play all videos in list easily without complex setup */}
       <Pressable style={styles.videoContainer} onPress={() => {/* would navigate to detail or play inline */}}>
          <View style={styles.videoPlaceholder}>
             <AppIcon name="play-circle" size={48} color="white" />
@@ -67,37 +68,39 @@ export const CircleScreen = () => {
   );
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Круг</Text>
-        <AppIcon name="search-outline" size={24} color={tokens.colors['on-surface']} />
-      </View>
+    <View style={[styles.container, { paddingTop: isDesktop ? 0 : insets.top }]}>
+      <View style={styles.contentWrapper}>
+        <View style={styles.header}>
+            <Text style={styles.headerTitle}>Круг</Text>
+            <AppIcon name="search-outline" size={24} color={tokens.colors['on-surface']} />
+        </View>
 
-      <View style={styles.filtersWrapper}>
+        <View style={styles.filtersWrapper}>
+            <FlatList
+                data={FILTERS}
+                renderItem={renderFilter}
+                keyExtractor={item => item}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.filtersContainer}
+            />
+        </View>
+
         <FlatList
-            data={FILTERS}
-            renderItem={renderFilter}
-            keyExtractor={item => item}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.filtersContainer}
+            data={circleVideos}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={styles.listContainer}
+            ListFooterComponent={
+                <View style={styles.footerMsg}>
+                    <Text style={styles.footerText}>Вы просмотрели все новые публикации.</Text>
+                    <Pressable onPress={() => router.push({ pathname: '/' } as any)} style={styles.footerBtn}>
+                        <Text style={styles.footerBtnText}>Вернуться в Пульс</Text>
+                    </Pressable>
+                </View>
+            }
         />
       </View>
-
-      <FlatList
-        data={circleVideos}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContainer}
-        ListFooterComponent={
-            <View style={styles.footerMsg}>
-                <Text style={styles.footerText}>Вы просмотрели все новые публикации.</Text>
-                <Pressable onPress={() => router.push({ pathname: '/' } as any)} style={styles.footerBtn}>
-                    <Text style={styles.footerBtnText}>Вернуться в Пульс</Text>
-                </Pressable>
-            </View>
-        }
-      />
     </View>
   );
 };
@@ -107,11 +110,18 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: tokens.colors.background,
   },
+  contentWrapper: {
+    flex: 1,
+    maxWidth: 600,
+    width: '100%',
+    alignSelf: 'center',
+  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: tokens.spacing.containerMarginMobile,
+    paddingTop: tokens.spacing.stackLg,
     paddingBottom: tokens.spacing.stackSm,
   },
   headerTitle: {

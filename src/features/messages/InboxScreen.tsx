@@ -6,6 +6,7 @@ import { tokens } from '../../design-system/tokens';
 import { AppIcon } from '../../components/AppIcon';
 import { Avatar } from '../../components/Avatar';
 import { mockUsers } from '../../data/mockData';
+import { useResponsive } from '../../hooks/useResponsive';
 
 // Mock dialogs for MVP
 const MOCK_DIALOGS = [
@@ -16,6 +17,7 @@ const MOCK_DIALOGS = [
 export const InboxScreen = () => {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const { isDesktop } = useResponsive();
 
   const renderItem = ({ item }: any) => (
     <Pressable style={styles.dialogRow} onPress={() => router.push({ pathname: '/chat/[id]' as any, params: { id: item.id, username: item.user.username } })}>
@@ -38,21 +40,23 @@ export const InboxScreen = () => {
   );
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
-      <View style={styles.header}>
-        <Pressable onPress={() => router.back()} style={styles.backBtn}>
-          <AppIcon name="arrow-back" size={24} color={tokens.colors['on-surface']} />
-        </Pressable>
-        <Text style={styles.headerTitle}>Сообщения</Text>
-        <View style={styles.backBtn} />
-      </View>
+    <View style={[styles.container, { paddingTop: isDesktop ? tokens.spacing.stackLg : insets.top }]}>
+      <View style={styles.contentWrapper}>
+        <View style={styles.header}>
+            <Pressable onPress={() => router.back()} style={styles.backBtn}>
+            <AppIcon name="arrow-back" size={24} color={tokens.colors['on-surface']} />
+            </Pressable>
+            <Text style={styles.headerTitle}>Сообщения</Text>
+            <View style={styles.backBtn} />
+        </View>
 
-      <FlatList
-        data={MOCK_DIALOGS}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-        contentContainerStyle={styles.list}
-      />
+        <FlatList
+            data={MOCK_DIALOGS}
+            renderItem={renderItem}
+            keyExtractor={item => item.id}
+            contentContainerStyle={styles.list}
+        />
+      </View>
     </View>
   );
 };
@@ -62,12 +66,22 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: tokens.colors.background,
   },
+  contentWrapper: {
+    flex: 1,
+    maxWidth: 800,
+    width: '100%',
+    alignSelf: 'center',
+    backgroundColor: tokens.colors['surface-container-lowest'],
+    borderRadius: tokens.rounded.xl,
+    overflow: 'hidden',
+  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: tokens.spacing.containerMarginMobile,
     paddingBottom: tokens.spacing.stackSm,
+    paddingTop: tokens.spacing.stackSm,
     borderBottomWidth: 1,
     borderBottomColor: tokens.colors['surface-container-highest'],
   },

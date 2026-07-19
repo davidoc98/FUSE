@@ -1,10 +1,36 @@
 import { Tabs } from 'expo-router';
 import { tokens } from '../../src/design-system/tokens';
-import { Platform } from 'react-native';
+import { Platform, View, StyleSheet } from 'react-native';
 import { BottomNavigation } from '../../src/features/navigation/BottomNavigation';
+import { SideNavigation } from '../../src/features/navigation/SideNavigation';
 import { AppIcon } from '../../src/components/AppIcon';
+import { useResponsive } from '../../src/hooks/useResponsive';
 
 export default function TabLayout() {
+  const { isDesktop } = useResponsive();
+
+  if (isDesktop) {
+    return (
+      <View style={styles.desktopContainer}>
+        <SideNavigation />
+        <View style={styles.desktopContent}>
+          <Tabs
+            screenOptions={{
+              headerShown: false,
+              tabBarStyle: { display: 'none' }, // Hide bottom tabs on desktop
+            }}>
+            <Tabs.Screen name="index" />
+            <Tabs.Screen name="circle" />
+            <Tabs.Screen name="create" />
+            <Tabs.Screen name="worlds" />
+            <Tabs.Screen name="profile" />
+          </Tabs>
+        </View>
+      </View>
+    );
+  }
+
+  // Mobile layout
   return (
     <Tabs
       screenOptions={{
@@ -60,3 +86,15 @@ export default function TabLayout() {
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  desktopContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    backgroundColor: tokens.colors.background,
+  },
+  desktopContent: {
+    flex: 1,
+    backgroundColor: tokens.colors.background,
+  }
+});
