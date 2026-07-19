@@ -14,6 +14,7 @@ interface AppState {
   setMixerSettings: (settings: Partial<MixerSettings>) => void;
   toggleLike: (videoId: string) => void;
   toggleSave: (videoId: string) => void;
+  addVideo: (video: Pick<Video, "url" | "title" | "description" | "tags">) => void;
   applyMixerSettings: () => void;
 }
 
@@ -54,6 +55,20 @@ export const useStore = create<AppState>((set, get) => ({
       }
       return { savedVideos: newSaved };
     }),
+  addVideo: (videoData) =>
+    set((state) => ({
+      videos: [
+        {
+          id: `new-${Date.now()}`,
+          ...videoData,
+          author: state.currentUser,
+          likesCount: 0,
+          commentsCount: 0,
+          sharesCount: 0,
+        },
+        ...state.videos,
+      ],
+    })),
   applyMixerSettings: () => {
     set((state) => {
         const shuffled = [...state.videos].sort(() => Math.random() - 0.5);

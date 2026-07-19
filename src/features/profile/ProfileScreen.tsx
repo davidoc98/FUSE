@@ -6,12 +6,14 @@ import { useStore } from '../../store/useStore';
 import { Avatar } from '../../components/Avatar';
 import { AppIcon } from '../../components/AppIcon';
 import { Badge } from '../../components/Badge';
+import { useRouter } from 'expo-router';
 
 const TABS = ['Главное', 'Tracks', 'Видео', 'Миры', 'Сохраненное'];
 
 export const ProfileScreen = () => {
   const insets = useSafeAreaInsets();
   const currentUser = useStore((state) => state.currentUser);
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState('Главное');
 
   return (
@@ -22,7 +24,9 @@ export const ProfileScreen = () => {
             <View style={styles.headerTop}>
                 <Text style={styles.headerTitle}>{currentUser.username}</Text>
                 <View style={styles.headerIcons}>
-                    <AppIcon name="settings-outline" size={24} color={tokens.colors['on-surface']} />
+                    <Pressable onPress={() => router.push('/inbox')}>
+                        <AppIcon name="chatbubble-ellipses-outline" size={24} color={tokens.colors['on-surface']} />
+                    </Pressable>
                 </View>
             </View>
 
