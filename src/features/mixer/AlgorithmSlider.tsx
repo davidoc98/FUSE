@@ -15,15 +15,19 @@ interface AlgorithmSliderProps {
 export const AlgorithmSlider: React.FC<AlgorithmSliderProps> = ({ label, value, leftLabel, rightLabel, onValueChange }) => {
   const width = 300; // Mock width
   const translateX = useSharedValue(value * width);
+  const startX = useSharedValue(0);
 
   const pan = Gesture.Pan()
+    .onStart(() => {
+      startX.value = translateX.value;
+    })
     .onUpdate((event) => {
-      let newX = translateX.value + event.translationX;
+      let newX = startX.value + event.translationX;
       if (newX < 0) newX = 0;
       if (newX > width) newX = width;
 
+      translateX.value = newX;
       if (onValueChange) {
-        translateX.value = newX;
         runOnJS(onValueChange)(newX / width);
       }
     });

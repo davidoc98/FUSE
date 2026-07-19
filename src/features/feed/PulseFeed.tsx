@@ -5,6 +5,7 @@ import { useStore } from '../../store/useStore';
 import { VideoFeedItem } from './VideoFeedItem';
 import { tokens } from '../../design-system/tokens';
 import { AlgorithmMixerSheet } from '../mixer/AlgorithmMixerSheet';
+import { CommentsSheet } from '../comments/CommentsSheet';
 import { Video } from '../../types';
 import BottomSheet from '@gorhom/bottom-sheet';
 
@@ -14,6 +15,8 @@ export const PulseFeed: React.FC = () => {
   const videos = useStore((state) => state.videos);
   const [activeIndex, setActiveIndex] = useState(0);
   const bottomSheetRef = useRef<BottomSheet>(null);
+  const commentsSheetRef = useRef<BottomSheet>(null);
+  const [activeVideoIdForComments, setActiveVideoIdForComments] = useState<string | null>(null);
 
   const onViewableItemsChanged = useCallback(({ viewableItems }: any) => {
     if (viewableItems.length > 0) {
@@ -32,13 +35,19 @@ export const PulseFeed: React.FC = () => {
     bottomSheetRef.current?.expand();
   }, []);
 
+  const openComments = useCallback((videoId: string) => {
+    setActiveVideoIdForComments(videoId);
+    commentsSheetRef.current?.expand();
+  }, []);
+
   const renderItem = useCallback(({ item, index }: ListRenderItemInfo<Video>) => (
     <VideoFeedItem
       video={item}
       isActive={index === activeIndex}
       onOpenMixer={openMixer}
+      onOpenComments={() => openComments(item.id)}
     />
-  ), [activeIndex, openMixer]);
+  ), [activeIndex, openMixer, openComments]);
 
   return (
     <View style={styles.container}>
@@ -52,6 +61,9 @@ export const PulseFeed: React.FC = () => {
         viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs as any}
       />
       <AlgorithmMixerSheet ref={bottomSheetRef} />
+      {activeVideoIdForComments && (
+         <CommentsSheet ref={commentsSheetRef} videoId={activeVideoIdForComments} />
+      )}
     </View>
   );
 };

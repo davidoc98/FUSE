@@ -30,9 +30,9 @@ The project is built based on the complete Master Product Specification (saved i
 2.  Run the app:
     `npm run web` (or `npm run android`, `npm run ios`)
 
+    *Note on Web:* The `expo-video` package and gesture handlers are configured to support web. If using `react-native-reanimated` on web, the babel plugin and namespace exports plugin are configured.
+
 ## Scripts
-*   `npm run lint` - Code linting via Expo.
-*   `npm run test` - Jest test suite (includes component tests).
 *   `npx tsc --noEmit` - TypeScript strict checking.
 
 ## Next Recommended Stage

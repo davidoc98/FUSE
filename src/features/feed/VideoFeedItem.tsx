@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Dimensions, Text, Pressable } from 'react-native';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import { Video } from '../../types';
@@ -10,8 +10,6 @@ import { useStore } from '../../store/useStore';
 import { Avatar } from '../../components/Avatar';
 import { AppIcon } from '../../components/AppIcon';
 import { VideoActions } from '../../components/VideoActions';
-import { CommentsSheet } from '../comments/CommentsSheet';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
 const { height: screenHeight, width: screenWidth } = Dimensions.get('window');
@@ -20,9 +18,10 @@ interface VideoFeedItemProps {
   video: Video;
   isActive: boolean;
   onOpenMixer: () => void;
+  onOpenComments: () => void;
 }
 
-export const VideoFeedItem: React.FC<VideoFeedItemProps> = ({ video, isActive, onOpenMixer }) => {
+export const VideoFeedItem: React.FC<VideoFeedItemProps> = ({ video, isActive, onOpenMixer, onOpenComments }) => {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const toggleLike = useStore((state) => state.toggleLike);
@@ -33,7 +32,6 @@ export const VideoFeedItem: React.FC<VideoFeedItemProps> = ({ video, isActive, o
   });
 
   const [isPlaying, setIsPlaying] = useState(isActive);
-  const commentsSheetRef = useRef<BottomSheetModal>(null);
 
   useEffect(() => {
     if (isActive) {
@@ -58,7 +56,6 @@ export const VideoFeedItem: React.FC<VideoFeedItemProps> = ({ video, isActive, o
     togglePlayState();
   }).runOnJS(true);
 
-
   const doubleTap = Gesture.Tap().numberOfTaps(2).onEnd(() => {
     toggleLike(video.id);
   }).runOnJS(true);
@@ -69,10 +66,6 @@ export const VideoFeedItem: React.FC<VideoFeedItemProps> = ({ video, isActive, o
     if (video.trackId) {
       router.push({ pathname: "/track/[id]" as any, params: { id: video.trackId } });
     }
-  };
-
-  const openComments = () => {
-    commentsSheetRef.current?.expand();
   };
 
   return (
@@ -122,15 +115,13 @@ export const VideoFeedItem: React.FC<VideoFeedItemProps> = ({ video, isActive, o
           </Pressable>
         )}
 
-        <CommentsSheet ref={commentsSheetRef as any} videoId={video.id} />
-
         <VideoActions
           likesCount={video.likesCount}
           commentsCount={video.commentsCount}
           sharesCount={video.sharesCount}
           isLiked={isLiked}
           onLike={() => toggleLike(video.id)}
-          onComment={openComments}
+          onComment={onOpenComments}
         />
       </View>
     </View>
