@@ -1,18 +1,28 @@
 import { create } from 'zustand';
-import { Video, MixerSettings } from '../types';
-import { mockVideos } from '../data/mockData';
+import { Video, MixerSettings, User, Comment, World } from '../types';
+import { mockVideos, mockUsers, mockComments, mockWorlds } from '../data/mockData';
 
 interface AppState {
+  currentUser: User;
   videos: Video[];
+  circleVideos: Video[]; // Mock for subscribed feed
+  worlds: World[];
+  comments: Comment[];
   mixerSettings: MixerSettings;
   likedVideos: Set<string>;
+  savedVideos: Set<string>;
   setMixerSettings: (settings: Partial<MixerSettings>) => void;
   toggleLike: (videoId: string) => void;
+  toggleSave: (videoId: string) => void;
   applyMixerSettings: () => void;
 }
 
 export const useStore = create<AppState>((set, get) => ({
+  currentUser: mockUsers.user1,
   videos: mockVideos,
+  circleVideos: [mockVideos[1], mockVideos[0]], // Just a subset for circle feed
+  worlds: mockWorlds,
+  comments: mockComments,
   mixerSettings: {
     mode: 'ai',
     familiarity: 0.5,
@@ -21,6 +31,7 @@ export const useStore = create<AppState>((set, get) => ({
     depth: 0.5,
   },
   likedVideos: new Set(),
+  savedVideos: new Set(),
   setMixerSettings: (settings) =>
     set((state) => ({ mixerSettings: { ...state.mixerSettings, ...settings } })),
   toggleLike: (videoId) =>
@@ -33,9 +44,17 @@ export const useStore = create<AppState>((set, get) => ({
       }
       return { likedVideos: newLiked };
     }),
+  toggleSave: (videoId) =>
+    set((state) => {
+      const newSaved = new Set(state.savedVideos);
+      if (newSaved.has(videoId)) {
+        newSaved.delete(videoId);
+      } else {
+        newSaved.add(videoId);
+      }
+      return { savedVideos: newSaved };
+    }),
   applyMixerSettings: () => {
-    // В реальном приложении здесь был бы запрос к API
-    // Для мока просто перемешиваем видео, чтобы имитировать изменение
     set((state) => {
         const shuffled = [...state.videos].sort(() => Math.random() - 0.5);
         return { videos: shuffled };

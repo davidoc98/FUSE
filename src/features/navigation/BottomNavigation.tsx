@@ -10,7 +10,7 @@ export const BottomNavigation = () => {
         tint="dark"
         intensity={80}
         style={{
-          ...StyleSheet.absoluteFill,
+          ...StyleSheet.absoluteFillObject,
           borderTopColor: 'rgba(255,255,255,0.1)',
           borderTopWidth: 1,
         } as any}

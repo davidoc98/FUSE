@@ -23,6 +23,7 @@ export const AlgorithmSlider: React.FC<AlgorithmSliderProps> = ({ label, value, 
       if (newX > width) newX = width;
 
       if (onValueChange) {
+        translateX.value = newX;
         runOnJS(onValueChange)(newX / width);
       }
     });

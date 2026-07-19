@@ -3,6 +3,18 @@ export interface User {
   username: string;
   avatarUrl: string;
   isVerified?: boolean;
+  bio?: string;
+  followersCount?: number;
+  followingCount?: number;
+}
+
+export interface Comment {
+  id: string;
+  videoId: string;
+  author: User;
+  text: string;
+  likesCount: number;
+  createdAt: string;
 }
 
 export interface Video {
@@ -15,13 +27,13 @@ export interface Video {
   commentsCount: number;
   sharesCount: number;
   tags: string[];
-  trackId?: string; // ID of the track this video belongs to
+  trackId?: string;
 }
 
 export interface Episode {
   id: string;
   title: string;
-  duration: number; // in seconds
+  duration: number;
   status: 'watched' | 'current' | 'future';
   thumbnailUrl: string;
   videoUrl: string;
@@ -33,15 +45,24 @@ export interface Track {
   description: string;
   author: User;
   coverUrl: string;
-  progress: number; // 0 to 1
+  progress: number;
   episodes: Episode[];
+  tags: string[];
+}
+
+export interface World {
+  id: string;
+  title: string;
+  description: string;
+  coverUrl: string;
+  membersCount: number;
   tags: string[];
 }
 
 export interface MixerSettings {
   mode: 'people' | 'ai' | 'any';
-  familiarity: number; // 0 to 1
-  entertainment: number; // 0 to 1
-  locality: number; // 0 to 1
-  depth: number; // 0 to 1
+  familiarity: number;
+  entertainment: number;
+  locality: number;
+  depth: number;
 }

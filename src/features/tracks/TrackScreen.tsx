@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   coverOverlay: {
-    ...StyleSheet.absoluteFill,
+    ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0,0,0,0.4)',
   },
   headerBackButton: {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, Dimensions, Text, Pressable } from 'react-native';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import { Video } from '../../types';
@@ -10,6 +10,8 @@ import { useStore } from '../../store/useStore';
 import { Avatar } from '../../components/Avatar';
 import { AppIcon } from '../../components/AppIcon';
 import { VideoActions } from '../../components/VideoActions';
+import { CommentsSheet } from '../comments/CommentsSheet';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
 const { height: screenHeight, width: screenWidth } = Dimensions.get('window');
@@ -31,6 +33,7 @@ export const VideoFeedItem: React.FC<VideoFeedItemProps> = ({ video, isActive, o
   });
 
   const [isPlaying, setIsPlaying] = useState(isActive);
+  const commentsSheetRef = useRef<BottomSheetModal>(null);
 
   useEffect(() => {
     if (isActive) {
@@ -42,8 +45,6 @@ export const VideoFeedItem: React.FC<VideoFeedItemProps> = ({ video, isActive, o
     }
   }, [isActive, player]);
 
-
-  // Sync state manually to avoid worklet issues
   const togglePlayState = () => {
      if (isPlaying) {
       player.pause();
@@ -70,6 +71,10 @@ export const VideoFeedItem: React.FC<VideoFeedItemProps> = ({ video, isActive, o
     }
   };
 
+  const openComments = () => {
+    commentsSheetRef.current?.expand();
+  };
+
   return (
     <View style={[styles.container, { height: screenHeight }]}>
       <GestureDetector gesture={gestures}>
@@ -86,14 +91,12 @@ export const VideoFeedItem: React.FC<VideoFeedItemProps> = ({ video, isActive, o
         </View>
       </GestureDetector>
 
-      {/* Top Overlay */}
       <View style={[styles.topOverlay, { paddingTop: insets.top + tokens.spacing.containerMarginMobile }]}>
         <Pressable onPress={onOpenMixer} style={styles.iconButton}>
           <AppIcon name="options-outline" size={24} color="white" />
         </Pressable>
       </View>
 
-      {/* Bottom Overlay */}
       <View style={[styles.bottomOverlay, { paddingBottom: insets.bottom + 100 }]}>
         <View style={styles.authorRow}>
           <Avatar url={video.author.avatarUrl} size={32} />
@@ -119,12 +122,15 @@ export const VideoFeedItem: React.FC<VideoFeedItemProps> = ({ video, isActive, o
           </Pressable>
         )}
 
+        <CommentsSheet ref={commentsSheetRef as any} videoId={video.id} />
+
         <VideoActions
           likesCount={video.likesCount}
           commentsCount={video.commentsCount}
           sharesCount={video.sharesCount}
           isLiked={isLiked}
           onLike={() => toggleLike(video.id)}
+          onComment={openComments}
         />
       </View>
     </View>

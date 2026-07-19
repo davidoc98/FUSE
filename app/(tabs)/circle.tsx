@@ -1,16 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { tokens } from '../../src/design-system/tokens';
+import { CircleScreen } from '../../src/features/circle/CircleScreen';
 
-export default function CircleScreen() {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Круг (Заглушка)</Text>
-    </View>
-  );
+export default function CircleRoute() {
+  return <CircleScreen />;
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: tokens.colors.background },
-  text: { color: tokens.colors['on-surface'], fontFamily: tokens.typography.headlineMd.fontFamily, fontSize: 24 },
-});

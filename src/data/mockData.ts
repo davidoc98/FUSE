@@ -1,4 +1,4 @@
-import { Video, Track, User } from '../types';
+import { Video, Track, User, Comment, World } from '../types';
 
 export const mockUsers: Record<string, User> = {
   user1: {
@@ -6,13 +6,38 @@ export const mockUsers: Record<string, User> = {
     username: 'Marina Arch',
     avatarUrl: 'https://i.pravatar.cc/150?u=user1',
     isVerified: true,
+    bio: 'Архитектор, урбанист. Строим будущее вместе.',
+    followersCount: 14500,
+    followingCount: 120,
   },
   user2: {
     id: 'user2',
     username: 'Eco Builder',
     avatarUrl: 'https://i.pravatar.cc/150?u=user2',
+    bio: 'Всё о зеленых технологиях в строительстве.',
+    followersCount: 8900,
+    followingCount: 450,
   },
 };
+
+export const mockWorlds: World[] = [
+  {
+    id: 'world1',
+    title: 'Eco-Construction',
+    description: 'Сообщество инженеров и архитекторов, создающих устойчивые здания.',
+    coverUrl: 'https://picsum.photos/seed/world1/800/600',
+    membersCount: 12500,
+    tags: ['Архитектура', 'Эко', 'Инженерия'],
+  },
+  {
+    id: 'world2',
+    title: 'Urban Future',
+    description: 'Как будут выглядеть города через 50 лет? Обсуждаем концепты.',
+    coverUrl: 'https://picsum.photos/seed/world2/800/600',
+    membersCount: 8400,
+    tags: ['Урбанистика', 'Будущее'],
+  }
+];
 
 export const mockVideos: Video[] = [
   {
@@ -50,6 +75,11 @@ export const mockVideos: Video[] = [
     tags: ['Eco', 'Construction', 'Day5'],
     trackId: 'track1',
   }
+];
+
+export const mockComments: Comment[] = [
+  { id: 'c1', videoId: 'vid1', author: mockUsers.user2, text: 'Отличный старт! Какой цемент используете?', likesCount: 45, createdAt: '2 часа назад' },
+  { id: 'c2', videoId: 'vid1', author: mockUsers.user1, text: 'Спасибо! Специальный эко-цемент с низким углеродным следом.', likesCount: 12, createdAt: '1 час назад' },
 ];
 
 export const mockTracks: Record<string, Track> = {
